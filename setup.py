@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="scoring",
-    version="0.0.1",
+    version="0.0.2",
     author="Pan Fu",
     author_email="panfu0207@gmail.com",
     description="Build scorecard for credit risk analysis",

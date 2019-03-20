@@ -54,13 +54,17 @@ def applyEWB(df, collist, n=10):
 # supervised binning
 ## Chimerge
 def getBinNum(df,col):
-    
+
     n=df[col].nunique()
-    x=10**np.floor(np.log10(n))
-    y=np.floor(n/x)*x
-    z=max(y,10000)/500
-    
-    return int(z)
+    if n>10000:
+        x=10**np.floor(np.log10(n))
+        y=np.floor(n/x)*x
+        z=max(y,10000)/100
+        return int(z)
+    else:
+        return 100
+
+
 
 
 def getChiDist(dof=1, sl=0.1):
@@ -365,23 +369,24 @@ def binByChi2(df,col,label,vartype,
 ## !!DONE!! be compatible with discrete feature
 
 # manually binning
-def manuallyBin(df,col,vartype,cutoff):
-    
-    if vartype=='cont':
-#         cutoff.append(np.inf)
-#         cutoff.insert(0,-np.inf)
-        return pd.cut(df[col],cutoff)
-    elif vartype=='disc':
-        res=[]
-        found=False
-        for i in df[col]:
-            for j in np.arange(len(cutoff)):
-                if i in cutoff[j]:
-                    found=True
-                    res.append(cutoff[j])
-            if found==False:
+def manuallyBin(df, col, vartype, cutoff):
+    if vartype == 'cont':
+        #         cutoff.append(np.inf)
+        #         cutoff.insert(0,-np.inf)
+        return pd.cut(df[col], cutoff)
+    elif vartype == 'disc':
+        res = []
+        found = False
+        for i in df[col].replace(np.nan, 'missing'):
+            if i == 'missing':
+                found = True
+                res.append(np.nan)
+            else:
+                for j in np.arange(len(cutoff)):
+                    if i in cutoff[j]:
+                        found = True
+                        res.append(str(cutoff[j]))
+            if found == False:
                 res.append('others')
-            found=False
+            found = False
         return res
-
-

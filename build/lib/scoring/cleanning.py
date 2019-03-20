@@ -51,28 +51,27 @@ def fillMissing(df, varDict, filling=-999):
 def discSummary(df):
     tmplist = []
     for i in df.columns:
-        
         # 非空值集
-        tmp1=df.loc[~df[i].isna(),i]
+        tmp1 = df.loc[~df[i].isna(), i]
         # 空值集
-        tmp2=df.loc[df[i].isna(),i]
-        tmp1rate=tmp1.value_counts()/tmp1.shape[0]
-        
-        if tmp2.shape[0]>0:
-            nuni=tmp1.nunique()+1
+        tmp2 = df.loc[df[i].isna(), i]
+        tmp1rate = tmp1.value_counts() / tmp1.shape[0]
+
+        if tmp2.shape[0] > 0:
+            nuni = tmp1.apply(lambda x: str(x)).nunique() + 1
         else:
-            nuni=tmp1.nunique()
-                 
+            nuni = tmp1.apply(lambda x: str(x)).nunique()
+
         tmp2 = [i,
                 df.shape[0],
                 nuni,
-#                 max(df[i]),
-#                 min(df[i]),
-#                 mean(df[i]),
-                format(nuni/df.shape[0], '.2%'),
+                #                 max(df[i]),
+                #                 min(df[i]),
+                #                 mean(df[i]),
+                format(nuni / df.shape[0], '.2%'),
                 format(max(tmp1rate), '.2%'),
                 format(min(tmp1rate), '.2%'),
-                format(tmp2.shape[0]/df.shape[0], '.2%')
+                format(tmp2.shape[0] / df.shape[0], '.2%')
                 ]
         tmplist.append(tmp2)
     df1 = pd.DataFrame(tmplist,
