@@ -1,0 +1,12 @@
+README.md
+setup.py
+scoring/__init__.py
+scoring/bivariate.py
+scoring/cleanning.py
+scoring/discretization.py
+scoring/evaluation.py
+scoring/scoring.py
+scoring.egg-info/PKG-INFO
+scoring.egg-info/SOURCES.txt
+scoring.egg-info/dependency_links.txt
+scoring.egg-info/top_level.txt

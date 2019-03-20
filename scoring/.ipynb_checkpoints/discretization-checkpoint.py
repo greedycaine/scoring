@@ -54,17 +54,13 @@ def applyEWB(df, collist, n=10):
 # supervised binning
 ## Chimerge
 def getBinNum(df,col):
-
+    
     n=df[col].nunique()
-    if n>10000:
-        x=10**np.floor(np.log10(n))
-        y=np.floor(n/x)*x
-        z=max(y,10000)/100
-        return int(z)
-    else:
-        return 100
-
-
+    x=10**np.floor(np.log10(n))
+    y=np.floor(n/x)*x
+    z=max(y,10000)/500
+    
+    return int(z)
 
 
 def getChiDist(dof=1, sl=0.1):

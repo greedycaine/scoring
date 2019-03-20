@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: scoring
+Version: 0.0.1
+Summary: Build scorecard for credit risk analysis
+Home-page: https://github.com/greedycaine/scoring
+Author: Pan Fu
+Author-email: panfu0207@gmail.com
+License: UNKNOWN
+Description: # scoring
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
