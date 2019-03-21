@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scoring.cleanning import delFromVardict
+from .cleanning import delFromVardict
 
 def calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
 

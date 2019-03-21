@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+from .cleanning import getVarTypes
 from scipy.stats import chi2 as c
 
 # unsupervised binning
@@ -56,13 +57,13 @@ def applyEWB(df, collist, n=10):
 def getBinNum(df,col):
 
     n=df[col].nunique()
-    if n>10000:
+    if n>100:
         x=10**np.floor(np.log10(n))
         y=np.floor(n/x)*x
         z=max(y,10000)/100
         return int(z)
     else:
-        return n
+        return None
 
 
 
@@ -143,7 +144,8 @@ def binByChi2(df,col,label,vartype,
         n=getBinNum(df,col)
     
     tmp=df[[col,label]].copy()
-    if vartype=='cont':
+    if vartype=='cont' and n!=None:
+        print("Equal Depth Binning is required, number of bins is:", n)
         tmp[col]=equalDepthBinning(tmp,col,n)[1]
         
     total=tmp.groupby(col).count()
@@ -247,8 +249,6 @@ def binByChi2(df,col,label,vartype,
 # manually binning
 def manuallyBin(df, col, vartype, cutoff):
     if vartype == 'cont':
-        #         cutoff.append(np.inf)
-        #         cutoff.insert(0,-np.inf)
         return pd.cut(df[col], cutoff)
     elif vartype == 'disc':
         res = []
@@ -273,17 +273,25 @@ def binData(df, vardict, method='chimerge'):
     label, disc, cont = getVarTypes(vardict)
 
     if method=='chimerge':
+        print("#########################################")
+        print("####It's using Chi-Merge algorithm...####")
+        print("#########################################")
 
         for i in cont:
-            df[i] = sc.manuallyBin(df, i, 'cont', sc.binByChi2(df, i, label, 'cont', getCutOff=True)[1])
+            print('\nDoing continous feature:',i)
+            df[i] = manuallyBin(df, i, 'cont', binByChi2(df, i, label, 'cont', getCutOff=True)[1])
 
         for i in disc:
-            df[i] = sc.manuallyBin(df, i, 'disc', sc.binByChi2(df, i, label, 'disc', getCutOff=True)[1])
+            print('\nDoing discrete feature:',i)
+            df[i] = manuallyBin(df, i, 'disc', binByChi2(df, i, label, 'disc', getCutOff=True)[1])
 
+        print('\nFinished')
         return df
     elif method=='CART':
+        print("It's using CART algorithm...")
 
         # TBD
+        print('\nFinished')
         return df
     else:
         print('Incorrect method chosen, original dataframe is returned.')

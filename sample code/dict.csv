@@ -1,0 +1,11 @@
+old,new,type,isNum,isDel
+Age,Age,cont,1,0
+Sex,Sex,disc,0,0
+Job,Job,disc,1,0
+Housing,Housing,disc,0,0
+Saving accounts,Saving accounts,disc,0,0
+Checking account,Checking account,disc,0,0
+Credit amount,Credit amount,cont,1,0
+Duration,Duration,cont,1,0
+Purpose,Purpose,disc,0,0
+Risk,y,label,1,0

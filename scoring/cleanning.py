@@ -29,11 +29,11 @@ def renameCols(df, vardict, inplace=True):
 
 # 区分离散连续
 def getVarTypes(vardict):
-    label = vardict.loc[vardict['type'] == 'label', 'new']
+
+    label = vardict.iloc[vardict.shape[0]-1]['new']
     disc = vardict.loc[vardict['type'] == 'disc', 'new']
     cont = vardict.loc[vardict['type'] == 'cont', 'new']
-    #     return {'label':list(label),'disc':list(disc),'cont':list(cont)}
-    return list(label), list(disc), list(cont)
+    return label, list(disc), list(cont)
 
 
 # 填充缺失
