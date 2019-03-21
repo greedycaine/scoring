@@ -18,99 +18,31 @@ def calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
     return ivcolumn, iv
 
 
-
-
 def bivariate(df, col, label, withIV=True, missingvalue='missing', dealMissing=True):
-    
-    df=df.replace(np.nan,missingvalue)
-    gb=df.groupby(col, as_index=False)
+    df = df.replace(np.nan, missingvalue)
+    gb = df.groupby(col, as_index=False)
 
-    total=df.shape[0]
-    all=gb.count()
-    bad=gb.sum()[label]
-    good=(all[label]-bad)
+    total = df.shape[0]
+    all = gb.count()
+    bad = gb.sum()[label]
+    good = (all[label] - bad)
 
-    bitable=pd.DataFrame({col:all[col],'good':good,'bad':bad}).\
-                  replace(0,0.001).\
-                  assign(goodDist=lambda x:x.bad/sum(x.bad),
-                         badDist=lambda x:x.good/sum(x.good),
-                         goodRate=lambda x:x.good/(x.good+x.bad),
-                         badRate=lambda x:x.bad/(x.good+x.bad)
-                        ).\
-                  assign(woe=lambda x:np.log(x.badDist/x.goodDist))
-    
+    bitable = pd.DataFrame({col: all[col], 'total': good + bad, 'good': good, 'bad': bad}). \
+        replace(0, 0.001). \
+        assign(totalDist=lambda x: x.total / sum(x.total),
+               goodDist=lambda x: x.bad / sum(x.bad),
+               badDist=lambda x: x.good / sum(x.good),
+               goodRate=lambda x: x.good / (x.total),
+               badRate=lambda x: x.bad / (x.total)
+               ). \
+        assign(woe=lambda x: np.log(x.badDist / x.goodDist))
+
     if withIV:
-        bitable['iv']=(bitable['badDist']-bitable['goodDist'])*bitable['woe']
-        
-    totalIV=sum(bitable['iv'])
-    
-    return bitable,totalIV
+        bitable['iv'] = (bitable['badDist'] - bitable['goodDist']) * bitable['woe']
 
+    totalIV = sum(bitable['iv'])
 
-
-
-
-# def bivariate(df, col, label='y', simplified=True):
-#     gb = df.groupby(col, as_index=False)
-
-#     allCnt = df.shape[0]
-#     allBadCnt = sum(df[label])
-#     allGoodCnt = allCnt - allBadCnt
-#     eachAllCnt = gb.count()[label]  # count each
-#     cumAllCnt = eachAllCnt.cumsum()
-#     eachBadCnt = gb.sum()[label]  # bad count
-#     cumBadCnt = eachBadCnt.cumsum()
-#     eachGoodCnt = eachAllCnt - eachBadCnt
-#     cumGoodCnt = eachGoodCnt.cumsum()
-#     bins = gb.count()[col]
-
-#     woe = calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt)
-#     ivcolumn, iv = calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt)
-
-#     if simplified:
-#         bitable = pd.concat([
-#             bins,
-#             # count
-#             eachGoodCnt, eachBadCnt, eachAllCnt,
-#             # count rate
-#             (eachGoodCnt / allGoodCnt).apply(lambda x: format(x, '.2%')),
-#             (eachBadCnt / allBadCnt).apply(lambda x: format(x, '.2%')),
-#             (eachAllCnt / allCnt).apply(lambda x: format(x, '.2%')),
-#             woe,
-#             ivcolumn
-#         ], axis=1)
-
-#         bitable.columns = [col, 'good', 'bad', 'total',
-#                            'totalRate', 'goodRate', 'badRate',
-#                            'woe', 'iv']
-#     else:
-#         bitable = pd.concat([
-#             bins,
-#             # count
-#             eachGoodCnt, eachBadCnt, eachAllCnt,
-#             # count rate
-#             (eachGoodCnt / allGoodCnt).apply(lambda x: format(x, '.2%')),
-#             (eachBadCnt / allBadCnt).apply(lambda x: format(x, '.2%')),
-#             (eachAllCnt / allCnt).apply(lambda x: format(x, '.2%')),
-#             # cumulative count
-#             cumGoodCnt, cumBadCnt, cumAllCnt,
-#             # cumulative count rate
-#             (cumGoodCnt / max(cumGoodCnt)).apply(lambda x: format(x, '.2%')),
-#             (cumBadCnt / max(cumBadCnt)).apply(lambda x: format(x, '.2%')),
-#             (cumAllCnt / max(cumAllCnt)).apply(lambda x: format(x, '.2%')),
-#             woe,
-#             ivcolumn
-#         ], axis=1)
-
-#         bitable.columns = [col, 'good', 'bad', 'total',
-#                            'totalRate', 'goodRate', 'badRate',
-#                            'cumGood', 'cumBad', 'cumTotal',
-#                            'cumGoodlRate', 'cumBadRate', 'cumTotalRate',
-#                            'woe', 'iv']
-
-#     bitable['totalIV'] = iv
-
-#     return bitable
+    return bitable, totalIV
 
 
 # return a dictionary of results of bivariate analysis
@@ -163,7 +95,6 @@ def ivTable(bidict,threshold=0.02):
     ivtable['isKept']=ivtable['iv'].apply(lambda x: 'Y' if x>threshold else 'N')
     
     return ivtable.reset_index(drop=True)
-
 
 
 def featureFilter(df,vd,bidict,ivtable):

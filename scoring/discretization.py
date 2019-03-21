@@ -62,7 +62,7 @@ def getBinNum(df,col):
         z=max(y,10000)/100
         return int(z)
     else:
-        return 100
+        return n
 
 
 
@@ -243,130 +243,6 @@ def binByChi2(df,col,label,vartype,
     else:
         return tmpsumm[[col, 'total', 'bad', 'good', 'occRate', 'badRate', 'chi2']]
 
-## def binByChi2(df,col,label,vartype,
-##               maxIntervals=6,minIntervals=2,
-##               threshold=False,
-##               minIntPect=0.05,
-##               dof=1,sl=0.1,
-##               n=None,inPercentum=True):
-##     
-##     if n==None:
-##         n=getBinNum(df,col)
-##         
-##     tmp=df[[col,label]].copy()
-##     tmp[col]=equalDepthBinning(tmp,col,getBinNum(df,col))[1]
-##         
-##     total=tmp.groupby(col).count()
-##     bad=tmp.groupby(col).sum()
-##     good=total-bad
-##     badr=bad/total
-##     occr=total/sum(total[label])
-##     
-##     if threshold==False:
-##         threshold=getChiDist(dof,sl)
-##         
-##     hasMissing=True if tmp.loc[tmp[col].isna(),'y'].shape[0] else False
-## 
-##     # replace可能会导致最终的bad和good总数与原始数据集df不一致，但暂未遇到，
-##     # 这段最后已经用int()处理了相应的部分    
-##     tmpsumm=pd.DataFrame({'total':total[label],
-##                           'bad':bad[label],
-##                           'good':good[label]}).\
-##                     replace(0,0.001).\
-##                     assign(occRate=lambda x:x.total/sum(x.total),
-##                            badRate=lambda x:x.bad/x.total)
-## 
-##     if vartype=='cont':
-##         tmpsumm=tmpsumm.sort_values(col).reset_index()
-##     elif vartype=='disc':
-##         tmpsumm=tmpsumm.sort_values('badRate').reset_index()
-##         tmpsumm[col]=[[i] for i in tmpsumm[col]]
-##         
-##     
-##     tmpsumm['chi2']=calc_chi2(tmpsumm)+[np.inf]    
-##     
-##     while (tmpsumm.shape[0]>minIntervals) and (tmpsumm.shape[0]>maxIntervals or \
-##                                                min(tmpsumm['chi2'])<threshold or \
-##                                                min(tmpsumm.occRate)<minIntPect):
-## 
-##         # first, check the threshold
-##         if min(tmpsumm['chi2'])<threshold:
-## 
-##             # 需要确定是用最小卡方值对比阈值，再将所有最小卡方值的合并；
-##             # 还是确定出小于阈值的所有值，在一次按从小到大合并：
-##             ## 即list1为小于阈值的值合集，list2为各个list1值中的索引合集，for i in list1: for j in list2: mergebin
-##             merge_val=sorted(tmpsumm[tmpsumm['chi2']<threshold]['chi2'].unique())
-##             for i in merge_val:
-##                 merge_idx=tmpsumm[tmpsumm['chi2']==i].index
-##                 for j in range(len(merge_idx)):
-##                     if vartype=='cont':
-##                         tmpsumm=mergeContByIndex(tmpsumm,merge_idx[-j-1])
-##                     elif vartype=='disc':
-##                         tmpsumm=mergeDiscByIndex(tmpsumm,col,merge_idx[-j-1])
-## 
-##         # second, maximum intervals
-##         elif tmpsumm.shape[0]>maxIntervals:
-## 
-##             merge_idx=tmpsumm[tmpsumm['chi2']==min(tmpsumm['chi2'])].index
-##             for i in range(len(merge_idx)):
-##                 if vartype=='cont':
-##                     tmpsumm=mergeContByIndex(tmpsumm,merge_idx[-i-1])
-##                 elif vartype=='disc':
-##                     tmpsumm=mergeDiscByIndex(tmpsumm,col,merge_idx[-i-1])
-## 
-##         elif min(tmpsumm.occRate)<minIntPect:
-## 
-##             merge_idx=tmpsumm[tmpsumm.occRate==min(tmpsumm.occRate)].index
-##             for i in range(len(merge_idx)):
-##                 if vartype=='cont':
-##                     tmpsumm=mergeContByIndex(tmpsumm,merge_idx[-i-1])
-##                 elif vartype=='disc':
-##                     tmpsumm=mergeDiscByIndex(tmpsumm,col,merge_idx[-i-1])
-##         
-##         tmpsumm['chi2']=calc_chi2(tmpsumm)+[np.inf]
-## 
-##     # 如果是连续变量，则计算其各分箱区间
-##     if vartype=='cont':
-##         for i in np.arange(tmpsumm.shape[0]-1):
-##             tmpsumm.loc[i,'bins']=pd.Interval(left=tmpsumm.loc[i,col],
-##                                               right=tmpsumm.loc[i+1,col],
-##                                               closed='left')
-##         tmpsumm.loc[tmpsumm.shape[0]-1,'bins']=pd.Interval(left=tmpsumm.loc[tmpsumm.shape[0]-1,col],
-##                                                            right=np.inf,
-##                                                            closed='left')
-##         
-##     if hasMissing:
-##         missingdf=tmp.loc[tmp[col].isna(),'y']
-##         mtotal=missingdf.count()
-##         mbad=missingdf.sum()
-##         mgood=mtotal-mbad
-##         moccRate=mtotal/tmp.shape[0]
-##         mbadRate=mbad/mtotal
-##         mchi2=0
-##         
-##         tmpsumm=tmpsumm.append({'bins':'missing',
-##                                 col:'missing',
-##                                 'total':mtotal,
-##                                 'bad':mbad,
-##                                 'good':mgood,
-##                                 'occRate':moccRate,
-##                                 'badRate':mbadRate,
-##                                 'chi2':mchi2},ignore_index=True)
-##                 
-##         tmpsumm['chi2']=calc_chi2(tmpsumm)+[np.inf]
-##     
-##     tmpsumm['bad']=tmpsumm['bad'].apply(lambda x: int(x))
-##     tmpsumm['good']=tmpsumm['good'].apply(lambda x: int(x))
-##     tmpsumm['total']=tmpsumm['total'].apply(lambda x: int(x))
-##     
-##     if inPercentum:
-##         tmpsumm['occRate']=tmpsumm['occRate'].apply(lambda x: format(x,'.2%'))
-##         tmpsumm['badRate']=tmpsumm['badRate'].apply(lambda x: format(x,'.2%'))
-## 
-##     return tmpsumm[['bins',col, 'total', 'bad', 'good', 'occRate', 'badRate', 'chi2']]
-
-## !!DONE!! need to add a column show the bin intervals, this column maybe called 'bins'
-## !!DONE!! be compatible with discrete feature
 
 # manually binning
 def manuallyBin(df, col, vartype, cutoff):
@@ -390,3 +266,25 @@ def manuallyBin(df, col, vartype, cutoff):
                 res.append('others')
             found = False
         return res
+
+
+# def binData(df,vardict,method='chimerge'):
+def binData(df, vardict, method='chimerge'):
+    label, disc, cont = getVarTypes(vardict)
+
+    if method=='chimerge':
+
+        for i in cont:
+            df[i] = sc.manuallyBin(df, i, 'cont', sc.binByChi2(df, i, label, 'cont', getCutOff=True)[1])
+
+        for i in disc:
+            df[i] = sc.manuallyBin(df, i, 'disc', sc.binByChi2(df, i, label, 'disc', getCutOff=True)[1])
+
+        return df
+    elif method=='CART':
+
+        # TBD
+        return df
+    else:
+        print('Incorrect method chosen, original dataframe is returned.')
+        return df
