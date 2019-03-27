@@ -2,7 +2,28 @@ import pandas as pd
 import numpy as np
 
 from .cleanning import getVarTypes
+from .bivariate import bivariate
 from scipy.stats import chi2 as c
+
+
+# Splitting Dataframe by expect-train ratio or size
+def splitDF(df, size=None, ratio=None, random_state=None):
+    if size == ratio == None:
+        ratio = 0.5
+        train = df.sample(frac=ratio, random_state=random_state)
+        test = df.loc[~df.index.isin(train.index)]
+    elif ratio == None and size > 0:
+        print('size')
+        train = df.sample(n=size, random_state=random_state)
+        test = df.loc[~df.index.isin(train.index)]
+    elif size == None and ratio >= 0 and ratio <= 1:
+        train = df.sample(frac=ratio, random_state=random_state)
+        test = df.loc[~df.index.isin(train.index)]
+    else:
+        print("Incorrect Inputs.")
+
+    return train.reset_index(drop=True), test.reset_index(drop=True)
+
 
 # unsupervised binning
 def equalDepthBinning(df,col,n=None):
@@ -140,8 +161,13 @@ def binByChi2(df,col,label,vartype,
               dof=1,sl=0.1,
               n=None,inPercentum=True,getCutOff=False):
     
+    # if n==None:
+    #     n=getBinNum(df,col)
+
     if n==None:
-        n=getBinNum(df,col)
+        n=min(df[col].nunique(),100)
+    else:
+        n=min(n,df[col].nunique(),100)
     
     tmp=df[[col,label]].copy()
     if vartype=='cont' and n!=None:
@@ -213,7 +239,7 @@ def binByChi2(df,col,label,vartype,
 
         
     if hasMissing==True:
-        missingdf=tmp.loc[tmp[col].isna(),'y']
+        missingdf=tmp.loc[tmp[col].isna(),label]
         mtotal=missingdf.count()
         mbad=missingdf.sum()
         mgood=mtotal-mbad
@@ -247,9 +273,14 @@ def binByChi2(df,col,label,vartype,
 
 
 # manually binning
-def manuallyBin(df, col, vartype, cutoff):
+def manuallyBin(df, col, label, vartype, cutoff, bi=False):
+
+    print('Binning data by cutoff:', cutoff)
     if vartype == 'cont':
-        return pd.cut(df[col], cutoff)
+        if bi:
+            return bivariate(pd.DataFrame({label: df[label], col: pd.cut(df[col], cutoff)}), col, label)[0]
+        else:
+            return pd.cut(df[col], cutoff)
     elif vartype == 'disc':
         res = []
         found = False
@@ -265,34 +296,53 @@ def manuallyBin(df, col, vartype, cutoff):
             if found == False:
                 res.append('others')
             found = False
-        return res
+
+        if bi:
+            return bivariate(pd.DataFrame({label: df[label], col: res}), col, label)[0]
+        else:
+            return res
 
 
 # def binData(df,vardict,method='chimerge'):
-def binData(df, vardict, method='chimerge'):
+def binData(df, vardict, altdict=None, method='chimerge'):
+
+    tmp=df.copy()
     label, disc, cont = getVarTypes(vardict)
+    cutoffdict={}
 
     if method=='chimerge':
         print("#########################################")
         print("####It's using Chi-Merge algorithm...####")
         print("#########################################")
 
+
+
         for i in cont:
             print('\nDoing continous feature:',i)
-            df[i] = manuallyBin(df, i, 'cont', binByChi2(df, i, label, 'cont', getCutOff=True)[1])
+            if altdict!=None and i in altdict.keys():
+                cutoffdict[i]=altdict[i]
+                tmp[i] = manuallyBin(tmp,i,label,'cont',altdict[i])
+            else:
+                cutoffdict[i]=binByChi2(tmp, i, label, 'cont', getCutOff=True)[1]
+                tmp[i] = manuallyBin(tmp, i, label, 'cont', cutoffdict[i])
 
         for i in disc:
             print('\nDoing discrete feature:',i)
-            df[i] = manuallyBin(df, i, 'disc', binByChi2(df, i, label, 'disc', getCutOff=True)[1])
+            if altdict!=None and i in altdict.keys():
+                cutoffdict[i]=altdict[i]
+                tmp[i] = manuallyBin(tmp,i,label,'cont',altdict[i])
+            else:
+                cutoffdict[i]=binByChi2(tmp, i, label, 'disc', getCutOff=True)[1]
+                tmp[i] = manuallyBin(tmp, i, label, 'disc', cutoffdict[i])
 
         print('\nFinished')
-        return df
+        return tmp,cutoffdict
     elif method=='CART':
         print("It's using CART algorithm...")
 
         # TBD
         print('\nFinished')
-        return df
+        return tmp,cutoffdict
     else:
         print('Incorrect method chosen, original dataframe is returned.')
-        return df
+        return tmp,cutoffdict

@@ -30,7 +30,7 @@ def renameCols(df, vardict, inplace=True):
 # 区分离散连续
 def getVarTypes(vardict):
 
-    label = vardict.iloc[vardict.shape[0]-1]['new']
+    label = vardict.loc[vardict['type'] == 'label', 'new'][0]
     disc = vardict.loc[vardict['type'] == 'disc', 'new']
     cont = vardict.loc[vardict['type'] == 'cont', 'new']
     return label, list(disc), list(cont)
@@ -48,7 +48,7 @@ def fillMissing(df, varDict, filling=-999):
 
 
 # 多少不同值，最大占比，最小占比，空值占比
-def discSummary(df):
+def describe(df):
     tmplist = []
     for i in df.columns:
         # 非空值集

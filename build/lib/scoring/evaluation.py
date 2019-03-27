@@ -5,6 +5,7 @@ import sklearn.metrics as metrics
 import matplotlib.pyplot as plt
 import itertools
 
+from .discretization import equalDepthBinning,manuallyBin
 
 
 ### Evaluation ###
@@ -82,3 +83,19 @@ def plotCM(cm, classes,
     plt.xlabel('Predicted label')
     plt.tight_layout()
     plt.show()
+
+
+# Calculating PSI(Population Stability Index)
+def calcPSI(df1, df2, col, n=10, getValue=False):
+    s1, bins = equalDepthBinning(df1, col, n)
+    s2 = manuallyBin(df2, col, vartype='cont', cutoff=sorted(bins.unique()) + [np.inf])
+    s1dist = pd.DataFrame({'s1dist': s1.value_counts() / s1.shape[0]})
+    s2dist = pd.DataFrame({'s2dist': s2.value_counts() / s2.shape[0]})
+    psi = s1dist.join(s2dist).sort_index()
+    psi['psi'] = (psi.s2dist - psi.s1dist) * np.log(psi.s2dist / psi.s1dist)
+    psi['totalpsi'] = sum(psi.psi)
+
+    if getValue:
+        return psi, sum(psi.psi)
+    else:
+        return psi

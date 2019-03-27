@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scoring.cleanning import delFromVardict
+from .cleanning import delFromVardict
 
 def calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
 
@@ -41,6 +41,7 @@ def bivariate(df, col, label, withIV=True, missingvalue='missing', dealMissing=T
         bitable['iv'] = (bitable['badDist'] - bitable['goodDist']) * bitable['woe']
 
     totalIV = sum(bitable['iv'])
+    bitable['totalIV']=totalIV
 
     return bitable, totalIV
 
@@ -60,26 +61,24 @@ def getBiDict(df, label, getiv=False):
         return bidict,ivtable
     else:
         return bidict
-    
-    
-    
+
+
 ### Transformation ###
 ######################
 # 把woe table转换成字典格式, 生成新的df1包含全部woe以及label
-def mapWOE(df, bidict, label, missingvalue='missing'):
-    
-    df=df.replace(np.nan,missingvalue)
-    df1=pd.DataFrame(df[label])
-    for i in bidict:
-        tmp=bidict[i]
-        tmpdict=pd.Series(tmp.woe.values,index=tmp[i]).to_dict()
-        tmplist=[]
-        for j in df[i]:
-            tmplist.append(tmpdict[j])
-        df1[i]=pd.Series(tmplist)
-    
-    return df1
+def mapWOE(df, bidict, missingvalue='missing'):
+    df1 = df.copy()
+    df1 = df1.replace(np.nan, missingvalue)
+    for i in df1.columns:
+        if i in bidict.keys():
+            tmp = bidict[i]
+            tmpdict = pd.Series(tmp.woe.values, index=tmp[i]).to_dict()
+            tmplist = []
+            for j in df1[i]:
+                tmplist.append(tmpdict[j])
+            df1[i] = pd.Series(tmplist)
 
+    return df1
 
 
 # 默认过滤iv值小于0.02的特征，
@@ -106,3 +105,31 @@ def featureFilter(df,vd,bidict,ivtable):
     df1,vd1=delFromVardict(df,vd)
 
     return df1,vd1,bidict1
+
+
+
+def review(bidict):
+
+    l = list(bidict.keys())
+    i = 0
+    altdict = {}
+    while True:
+
+        print("\n")
+        print(bidict[l[i]].to_string())
+        res = input("Boy, it's your turn?")
+        if res in ['n', 'next']:
+            i += 1
+            if i >= len(l):
+                break
+        elif res in ['p', 'pre', 'prev', 'previous']:
+            i -= 1
+        elif res in ['q', 'quit']:
+            break
+        elif isinstance(eval(res), list) == True:
+            altdict[l[i]] = eval(res)
+            i += 1
+        else:
+            print('Incorrect Input!')
+
+    return altdict
