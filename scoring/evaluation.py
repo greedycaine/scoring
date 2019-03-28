@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import itertools
 
 from .discretization import equalDepthBinning,manuallyBin
-
+from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
 
 ### Evaluation ###
 ##################
@@ -99,3 +99,24 @@ def calcPSI(df1, df2, col, n=10, getValue=False):
         return psi, sum(psi.psi)
     else:
         return psi
+
+
+def plotCorr(woedf):
+
+    corr = woedf.corr()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(corr, cmap='coolwarm', vmin=-1, vmax=1)
+    fig.colorbar(cax)
+    ticks = np.arange(0, len(woedf.columns), 1)
+    ax.set_xticks(ticks)
+    plt.xticks(rotation=90)
+    ax.set_yticks(ticks)
+    ax.set_xticklabels(woedf.columns)
+    ax.set_yticklabels(woedf.columns)
+    plt.show()
+
+
+def calcVIF(df):
+
+    return vif(df.values,1)

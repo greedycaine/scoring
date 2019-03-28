@@ -7,4 +7,4 @@ from scoring.evaluation import *
 from scoring.scoring import *
 
 name='scoring'
-__version__='0.0.6'
+__version__='0.0.7'
