@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a31bff0-3392-490a-ba79-250813060529" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/scoring/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/scoring/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/scoring/discretization.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/scoring/discretization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/scoring/scoring.py" beforeDir="false" afterPath="$PROJECT_DIR$/build/lib/scoring/scoring.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scoring.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/scoring.egg-info/PKG-INFO" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scoring/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/scoring/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scoring/bivariate.py" beforeDir="false" afterPath="$PROJECT_DIR$/scoring/bivariate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scoring/discretization.py" beforeDir="false" afterPath="$PROJECT_DIR$/scoring/discretization.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scoring/scoring.py" beforeDir="false" afterPath="$PROJECT_DIR$/scoring/scoring.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.6868372">
+    <splitter split-orientation="horizontal" split-proportion="0.49344978">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="discretization.py" pinned="false" current-in-tab="false">
@@ -35,10 +28,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="bivariate.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="bivariate.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/scoring/bivariate.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="114">
+                <state relative-caret-position="342">
                   <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
                   <folding>
                     <element signature="e#0#19#0" expanded="true" />
@@ -71,11 +64,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="scoring.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="scoring.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/scoring/scoring.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="399">
-                  <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
+                <state relative-caret-position="-266">
+                  <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
                 </state>
               </provider>
             </entry>
@@ -99,8 +92,8 @@
           <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/scoring/__init__.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="171">
-                  <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+                <state relative-caret-position="228">
+                  <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
                 </state>
               </provider>
             </entry>
@@ -128,15 +121,15 @@
         <option value="$PROJECT_DIR$/scoring/evaluation.py" />
         <option value="$PROJECT_DIR$/scoring/cleanning.py" />
         <option value="$PROJECT_DIR$/scoring/discretization.py" />
+        <option value="$PROJECT_DIR$/scoring/bivariate.py" />
         <option value="$PROJECT_DIR$/scoring/__init__.py" />
         <option value="$PROJECT_DIR$/scoring/scoring.py" />
-        <option value="$PROJECT_DIR$/scoring/bivariate.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-317" />
-    <option name="y" value="697" />
+    <option name="x" value="-311" />
+    <option name="y" value="766" />
     <option name="width" value="610" />
     <option name="height" value="1040" />
   </component>
@@ -152,11 +145,6 @@
             <path>
               <item name="scoring" type="b2602c69:ProjectViewProjectNode" />
               <item name="scoring" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="scoring" type="b2602c69:ProjectViewProjectNode" />
-              <item name="scoring" type="462c0819:PsiDirectoryNode" />
-              <item name="dist" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="scoring" type="b2602c69:ProjectViewProjectNode" />
@@ -318,6 +306,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/scoring/bivariate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/scoring/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
@@ -330,18 +328,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/scoring/scoring.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="47" column="26" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/scoring/bivariate.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="39" lean-forward="true" selection-start-line="39" selection-end-line="39" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-266">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
         </state>
       </provider>
     </entry>

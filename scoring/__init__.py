@@ -11,4 +11,6 @@ from scoring.scoring import *
 # twine upload dist/*
 
 name='scoring'
-__version__='0.0.8'
+# add function output scorecard as an excel
+__version__='0.0.9'
+

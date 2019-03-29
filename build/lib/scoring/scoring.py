@@ -55,3 +55,21 @@ def scoring(Xdf,Ydf,label,m,bidict):
     tmp,basescore=calcScore(tmp, m.intercept_, a, b, label)
     
     return [tmp,basescore]
+
+
+def toScorecard(bidict, basescore, path='./'):
+    scorecard = pd.DataFrame(columns=['feature', 'bins',
+                                      'total', 'good', 'bad',
+                                      'totalDist', 'goodDist', 'badDist',
+                                      'goodRate', 'badRate',
+                                      'woe', 'iv', 'totalIV',
+                                      'score'])
+
+    scorecard = scorecard.append({'feature': 'basesocre', 'score': basescore}, ignore_index=True)
+
+    for i in bidict:
+        tmp = bidict[i].rename(columns={i: 'bins'})
+        tmp['feature'] = i
+        scorecard = scorecard.append(tmp, sort=False)
+
+    scorecard.to_excel(path + 'scorecard.xlsx', index=False)
