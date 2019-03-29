@@ -330,7 +330,7 @@ def binData(df, vardict, altdict=None, method='chimerge'):
             print('\nDoing discrete feature:',i)
             if altdict!=None and i in altdict.keys():
                 cutoffdict[i]=altdict[i]
-                tmp[i] = manuallyBin(tmp,i,label,'cont',altdict[i])
+                tmp[i] = manuallyBin(tmp,i,label,'disc',altdict[i])
             else:
                 cutoffdict[i]=binByChi2(tmp, i, label, 'disc', getCutOff=True)[1]
                 tmp[i] = manuallyBin(tmp, i, label, 'disc', cutoffdict[i])

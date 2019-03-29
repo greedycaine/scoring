@@ -2,20 +2,21 @@ import pandas as pd
 import numpy as np
 from .cleanning import delFromVardict
 
-def calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
+# # removed from version 0.0.8, replaced by calculating woe directly inside bitable
+# def calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
+#
+#     woe = np.log((eachGoodCnt / eachBadCnt) / (allGoodCnt / allBadCnt))
+#
+#     return woe
 
-    woe = np.log((eachGoodCnt / eachBadCnt) / (allGoodCnt / allBadCnt))
-
-    return woe
-
-
-def calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
-    # calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt, label='DEFAULT')
-    woe = calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt)
-    ivcolumn = (eachGoodCnt / allGoodCnt - eachBadCnt / allBadCnt) * woe
-    iv = sum(ivcolumn)
-
-    return ivcolumn, iv
+# # removed from version 0.0.8, replaced by calculating iv directly inside bitable
+# def calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt):
+#     # calcIV(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt, label='DEFAULT')
+#     woe = calcWOE(allGoodCnt, allBadCnt, eachGoodCnt, eachBadCnt)
+#     ivcolumn = (eachGoodCnt / allGoodCnt - eachBadCnt / allBadCnt) * woe
+#     iv = sum(ivcolumn)
+#
+#     return ivcolumn, iv
 
 
 def bivariate(df, col, label, withIV=True, missingvalue='missing', dealMissing=True):
@@ -30,8 +31,8 @@ def bivariate(df, col, label, withIV=True, missingvalue='missing', dealMissing=T
     bitable = pd.DataFrame({col: all[col], 'total': good + bad, 'good': good, 'bad': bad}). \
         replace(0, 0.001). \
         assign(totalDist=lambda x: x.total / sum(x.total),
-               goodDist=lambda x: x.bad / sum(x.bad),
-               badDist=lambda x: x.good / sum(x.good),
+               goodDist=lambda x: x.good / sum(x.good),
+               badDist=lambda x: x.bad / sum(x.bad),
                goodRate=lambda x: x.good / (x.total),
                badRate=lambda x: x.bad / (x.total)
                ). \

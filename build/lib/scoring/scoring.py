@@ -14,16 +14,17 @@ def calcAB(odds=1/19, pdo=50, p0=600):
 #     B=pdo/ln(2)           (1)
 #     A=p0-Bln(odds)        (2)
     b=pdo/np.log(2)
-    a=p0-b*np.log(odds)
-    
+    a=p0+b*np.log(odds)
+
     return [a,b]
 
-def calcBinScore(df,bidict,b,coef):
-    n=0
-    
+
+def calcBinScore(df, bidict, b, coef):
+    n = 0
+
     for i in df.columns:
-        bidict[i]['score']=-b*coef[0][n]*bidict[i]['woe']
-        n=n+1
+        bidict[i]['score'] = round(-b * coef[0][n] * bidict[i]['woe'])
+        n = n + 1
     return bidict
 
 def mapScore(Xdf,Ydf,bidict,label):
@@ -39,12 +40,12 @@ def mapScore(Xdf,Ydf,bidict,label):
         
     return newdf
 
-def calcScore(df, model_intercept, a, b, label):
 
-    basescore=(a+b*model_intercept)[0]
-    df['score']=basescore+df.sum(axis=1)-df[label]
-    
-    return [df,basescore]
+def calcScore(df, model_intercept, a, b, label):
+    basescore = round((a - b * model_intercept)[0])
+    df['score'] = basescore + df.sum(axis=1) - df[label]
+
+    return [df, basescore]
 
 def scoring(Xdf,Ydf,label,m,bidict):
     
